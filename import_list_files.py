@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, filedialog, RIGHT, X, Y, W, E, N, S, Label, StringVar, LabelFrame, OptionMenu
+from tkinter import ttk, filedialog, RIGHT, X, Y, W, E, N, S, Label, StringVar, LabelFrame, OptionMenu, messagebox
 import natsort
 import numpy as np
 import os
@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 
 def LoadAction():
     filetypes = (
-        ('CSV files', '*.csv*'),
+        ('ALL files', '*.*'),
+        ('CSV files', '*.csv'),
         ('text files', '*.txt')
     )
 
@@ -52,7 +53,7 @@ def call_delete():
 
 def generate_plot_button():
     global files_to_open
-    if 'files_to_open' in globals() and not files_to_open:
+    if 'files_to_open' in globals() and len(files_to_open) != 0:
         print(files_to_open)
         generate_plot()
 
@@ -81,7 +82,7 @@ def generate_plot():
         i3 = table.iloc[rozsah1:rozsah2, 3]
         i3 = i3.astype(np.float64)
 
-        plt.figure(figsize=(10, 10))
+        plt.figure(figsize=(5, 5))
         plt.title('Data ze souboru: ' + os.path.basename((file).replace('.csv', '')))
         plt.plot(t, i1)
         plt.plot(t, i2)
@@ -165,8 +166,11 @@ input_frame.grid_columnconfigure(0, weight=1)
 input_frame.grid_columnconfigure(1, weight=1)
 input_frame.grid_columnconfigure(2, weight=1)
 
-option_frame = LabelFrame(root, text="option", padx=5, pady=5)
-option_frame.grid(row=0, column=1, padx=5, pady=5, sticky=N+S+W+E)
+option_frame1 = LabelFrame(root, text="option", padx=5, pady=5)
+option_frame1.grid(row=0, column=1, padx=5, pady=5, sticky=N+S+W+E)
+
+option_frame2 = LabelFrame(root, text="option", padx=5, pady=5)
+option_frame2.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=N+S+W+E)
 
 # option_frame.grid_rowconfigure(1, weight=1)
 # option_frame.grid_columnconfigure(0, weight=1)
@@ -208,9 +212,35 @@ sizes = (('Small', 'S'),
          ('Extra Extra Large', 'XXL'))
 
 for i, val in enumerate(sizes):
-    r = ttk.Radiobutton(option_frame, text=val[0], value=val[1], variable=selected_size)
+    r = ttk.Radiobutton(option_frame1, text=val[0], value=val[1], variable=selected_size)
     r.grid(row=i, column=0, padx=0, pady=0, sticky=W+E)
 
+OPTIONS = [
+"I",
+"U",
+"M",
+"n",
+]
+
+label_columns = Label(option_frame2, text="1")
+label_columns.grid(row=5, column=0, columnspan=3, rowspan=1, sticky=W, padx=2, pady=(5,0))
+
+variable = StringVar(option_frame2)
+variable.set(OPTIONS[0]) # default value
+
+w = OptionMenu(option_frame2, variable, *OPTIONS)
+w.grid(row=0, column=0, padx=0, pady=0, sticky=W+E)
 
 
 root.mainloop()
+
+
+
+
+
+
+
+
+
+
+
