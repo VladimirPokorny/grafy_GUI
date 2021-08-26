@@ -204,16 +204,16 @@ button_plot = tk.Button(text="Generate Plots", command=generate_plot_button)
 button_plot.grid(row=3, column=1, padx=10, pady=10, sticky=W+E)
 #
 
-selected_size = tk.StringVar()
-sizes = (('Small', 'S'),
-         ('Medium', 'M'),
-         ('Large', 'L'),
-         ('Extra Large', 'XL'),
-         ('Extra Extra Large', 'XXL'))
+# selected_size = tk.StringVar()
+# sizes = (('Small', 'S'),
+#          ('Medium', 'M'),
+#          ('Large', 'L'),
+#          ('Extra Large', 'XL'),
+#          ('Extra Extra Large', 'XXL'))
 
-for i, val in enumerate(sizes):
-    r = ttk.Radiobutton(option_frame1, text=val[0], value=val[1], variable=selected_size)
-    r.grid(row=i, column=0, padx=0, pady=0, sticky=W+E)
+# for i, val in enumerate(sizes):
+#     r = ttk.Radiobutton(option_frame1, text=val[0], value=val[1], variable=selected_size)
+#     r.grid(row=i, column=0, padx=0, pady=0, sticky=W+E)
 
 OPTIONS = [
 "I",
@@ -222,14 +222,14 @@ OPTIONS = [
 "n",
 ]
 
-label_columns = Label(option_frame2, text="1")
-label_columns.grid(row=5, column=0, columnspan=3, rowspan=1, sticky=W, padx=2, pady=(5,0))
+label_columns = Label(option_frame1, text="1")
+label_columns.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
 
-variable = StringVar(option_frame2)
+variable = StringVar(option_frame1)
 variable.set(OPTIONS[0]) # default value
 
-w = OptionMenu(option_frame2, variable, *OPTIONS)
-w.grid(row=0, column=0, padx=0, pady=0, sticky=W+E)
+w = OptionMenu(option_frame1, variable, *OPTIONS)
+w.grid(row=0, column=1, padx=2, pady=2, sticky=W+E)
 
 
 root.mainloop()
