@@ -4,7 +4,7 @@ import numpy as np
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-from units import physical_quantity
+from units import physical_quantity, data
 import natsort
 
 def LoadAction():
@@ -52,23 +52,14 @@ def call_delete():
         del files_to_open[i]
         print(files_to_open)
 
-def unit_choose():
-    if quantity_unit_column1.get() == "t - time":
-        quantity_unit_column1.config(value=unit_time)
-        quantity_unit_column1.current(0)
-    if quantity_unit_column1.get() == "I - current":
-        quantity_unit_column1.config(value=unit_current)
-        quantity_unit_column1.current(0)
-    if quantity_unit_column1.get() == "U - voltage":
-        quantity_unit_column1.config(value=unit_voltage)
-        quantity_unit_column1.current(0)
-    if quantity_unit_column1.get() == "M - torque":
-        quantity_unit_column1.config(value=unit_torque)
-        quantity_unit_column1.current(0)
-    if quantity_unit_column1.get() == "n - speed":
-        quantity_unit_column1.config(value=unit_speed)
-        quantity_unit_column1.current(0)
-    print("test")
+
+def unit_choose(*args):
+    quantity_units = data[variable_a.get()]
+    variable_b.set(quantity_units[0])
+    menu = optionmenu_b['menu']
+    menu.delete(0, 'end')
+    for quantity_unit in quantity_units:
+        menu.add_command(label=quantity_unit, command=lambda nation=quantity_unit: variable_b.set(nation))
 
 def generate_plot_button():
     global files_to_open
@@ -169,7 +160,8 @@ def generate_plot():
 # The window
 root = tk.Tk()
 root.title("List App")
-root.geometry("500x400")
+#root.geometry("500x400")
+root.geometry("700x600")
 root.resizable(height = None, width = None)
 root.minsize(450, 350)
 root.grid_rowconfigure(1, weight=1)
@@ -246,24 +238,39 @@ for i in range(4):
 
     globals()[f"quantity_column{i}"] = OptionMenu(option_frame1, globals()[f"value_column{i}"], *physical_quantity)
     globals()[f"quantity_column{i}"].grid(row=i, column=1, padx=2, pady=2, sticky=W + E)
-    globals()[f"quantity_column{i}"].bind("<<ComboboxSelected>>", unit_choose)
+    #globals()[f"quantity_column{i}"].bind("<<ComboboxSelected>>", unit_choose())
 
     globals()[f"quantity_unit_column{i}"] = ttk.Combobox(option_frame1, value=[" "])
     globals()[f"quantity_unit_column{i}"].current(0)
     globals()[f"quantity_unit_column{i}"].grid(row=i, column=2, padx=2, pady=2, sticky=W + E)
 
 
+variable_a = StringVar()
+variable_b = StringVar()
 
-# my_combo = ttk.Combobox(root, value=sizes)
-# my_combo.current(0)
-# my_combo.pack(pady=20)
-# # bind the combobox
-# my_combo.bind("<<ComboboxSelected>>", pick_color)
-#
-# # Color Combo box
-# color_combo = ttk.Combobox(root, value=[" "])
-# color_combo.current(0)
-# color_combo.pack(pady=20)
+variable_a.trace('w', unit_choose)
+
+for i in range(4):
+    globals()[f"label_columns{i}"] = Label(option_frame2, text="column " + str(i + 1) + ":")
+    globals()[f"label_columns{i}"].grid(row=i, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
+
+    globals()[f"value_column{i}"] = StringVar(option_frame2)
+    globals()[f"value_column{i}"].set(physical_quantity[0])  # default value
+
+    globals()[f"quantity_column{i}"] = OptionMenu(option_frame2, globals()[f"value_column{i}"], *physical_quantity)
+    globals()[f"quantity_column{i}"].grid(row=i, column=1, padx=2, pady=2, sticky=W + E)
+    #globals()[f"quantity_column{i}"].bind("<<ComboboxSelected>>", unit_choose())
+
+    globals()[f"quantity_unit_column{i}"] = ttk.Combobox(option_frame2, value=[" "])
+    globals()[f"quantity_unit_column{i}"].current(0)
+    globals()[f"quantity_unit_column{i}"].grid(row=i, column=2, padx=2, pady=2, sticky=W + E)
+
+optionmenu_a = OptionMenu(option_frame2, variable_a, *data.keys())
+optionmenu_b = OptionMenu(option_frame2, variable_b, '')
+
+variable_a.set('t - time')
+optionmenu_a.grid(row=5, column=2, padx=2, pady=2, sticky=W + E)
+optionmenu_b.grid(row=6, column=2, padx=2, pady=2, sticky=W + E)
 
 
 
