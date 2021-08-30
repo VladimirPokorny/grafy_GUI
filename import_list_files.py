@@ -53,13 +53,13 @@ def call_delete():
         print(files_to_open)
 
 
-def unit_choose(*args):
-    quantity_units = data[variable_a.get()]
-    variable_b.set(quantity_units[0])
-    menu = optionmenu_b['menu']
+def unit_choose(i,*args):
+    quantity_units = data[globals()[f"value_column_a{i}"].get()]
+    globals()[f"value_column_b{i}"].set(quantity_units[0])
+    menu = globals()[f"quantity_column_b{i}"]['menu']
     menu.delete(0, 'end')
     for quantity_unit in quantity_units:
-        menu.add_command(label=quantity_unit, command=lambda nation=quantity_unit: variable_b.set(nation))
+        menu.add_command(label=quantity_unit, command=lambda nation=quantity_unit: globals()[f"value_column_b{i}"].set(nation))
 
 def generate_plot_button():
     global files_to_open
@@ -245,32 +245,50 @@ for i in range(4):
     globals()[f"quantity_unit_column{i}"].grid(row=i, column=2, padx=2, pady=2, sticky=W + E)
 
 
-variable_a = StringVar()
-variable_b = StringVar()
-
-variable_a.trace('w', unit_choose)
-
 for i in range(4):
     globals()[f"label_columns{i}"] = Label(option_frame2, text="column " + str(i + 1) + ":")
     globals()[f"label_columns{i}"].grid(row=i, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
 
-    globals()[f"value_column{i}"] = StringVar(option_frame2)
-    globals()[f"value_column{i}"].set(physical_quantity[0])  # default value
+    globals()[f"value_column_a{i}"] = StringVar()
+    globals()[f"value_column_b{i}"] = StringVar()
+    globals()[f"value_column_a{i}"].trace('w', unit_choose(i))
 
-    globals()[f"quantity_column{i}"] = OptionMenu(option_frame2, globals()[f"value_column{i}"], *physical_quantity)
-    globals()[f"quantity_column{i}"].grid(row=i, column=1, padx=2, pady=2, sticky=W + E)
-    #globals()[f"quantity_column{i}"].bind("<<ComboboxSelected>>", unit_choose())
+    globals()[f"quantity_column_a{i}"] = OptionMenu(option_frame2, globals()[f"value_column_a{i}"], *data.keys())
+    globals()[f"quantity_column_b{i}"] = OptionMenu(option_frame2, globals()[f"value_column_b{i}"], '')
+    globals()[f"value_column_a{i}"].set('t - time')
 
-    globals()[f"quantity_unit_column{i}"] = ttk.Combobox(option_frame2, value=[" "])
-    globals()[f"quantity_unit_column{i}"].current(0)
-    globals()[f"quantity_unit_column{i}"].grid(row=i, column=2, padx=2, pady=2, sticky=W + E)
+    globals()[f"quantity_column_a{i}"].grid(row=i, column=1, padx=2, pady=2, sticky=W + E)
+    globals()[f"quantity_column_b{i}"].grid(row=i, column=2, padx=2, pady=2, sticky=W + E)
 
-optionmenu_a = OptionMenu(option_frame2, variable_a, *data.keys())
-optionmenu_b = OptionMenu(option_frame2, variable_b, '')
 
-variable_a.set('t - time')
-optionmenu_a.grid(row=5, column=2, padx=2, pady=2, sticky=W + E)
-optionmenu_b.grid(row=6, column=2, padx=2, pady=2, sticky=W + E)
+
+    variable_a = StringVar()
+    variable_b = StringVar()
+
+    #variable_a.trace('w', unit_choose(i))
+
+    optionmenu_a = OptionMenu(option_frame2, variable_a, *data.keys())
+    optionmenu_b = OptionMenu(option_frame2, variable_b, '')
+
+    variable_a.set('t - time')
+    optionmenu_a.grid(row=5, column=2, padx=2, pady=2, sticky=W + E)
+    optionmenu_b.grid(row=6, column=2, padx=2, pady=2, sticky=W + E)
+
+
+
+
+
+
+    #
+    # globals()[f"value_column{i}"].trace('w', unit_choose)
+    #
+    # globals()[f"quantity_column{i}"] = OptionMenu(option_frame2, globals()[f"value_column{i}"], *data.keys())
+    # globals()[f"quantity_column{i}"].grid(row=i, column=1, padx=2, pady=2, sticky=W + E)
+    #
+    # globals()[f"quantity_unit_column{i}"] = OptionMenu(option_frame2, variable_b, '')
+    # globals()[f"quantity_unit_column{i}"].grid(row=i, column=2, padx=2, pady=2, sticky=W + E)
+
+
 
 
 
