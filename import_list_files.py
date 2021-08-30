@@ -1,10 +1,11 @@
 import tkinter as tk
-from tkinter import ttk, filedialog, RIGHT, X, Y, W, E, N, S, Label, StringVar, LabelFrame, OptionMenu, messagebox
-import natsort
+from tkinter import ttk, filedialog, RIGHT, X, Y, W, E, N, S, Label, StringVar, LabelFrame, OptionMenu, messagebox, VERTICAL
 import numpy as np
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+from units import physical_quantity
+import natsort
 
 def LoadAction():
     filetypes = (
@@ -50,6 +51,24 @@ def call_delete():
         listbox.delete(i)
         del files_to_open[i]
         print(files_to_open)
+
+def unit_choose():
+    if quantity_unit_column1.get() == "t - time":
+        quantity_unit_column1.config(value=unit_time)
+        quantity_unit_column1.current(0)
+    if quantity_unit_column1.get() == "I - current":
+        quantity_unit_column1.config(value=unit_current)
+        quantity_unit_column1.current(0)
+    if quantity_unit_column1.get() == "U - voltage":
+        quantity_unit_column1.config(value=unit_voltage)
+        quantity_unit_column1.current(0)
+    if quantity_unit_column1.get() == "M - torque":
+        quantity_unit_column1.config(value=unit_torque)
+        quantity_unit_column1.current(0)
+    if quantity_unit_column1.get() == "n - speed":
+        quantity_unit_column1.config(value=unit_speed)
+        quantity_unit_column1.current(0)
+    print("test")
 
 def generate_plot_button():
     global files_to_open
@@ -192,13 +211,15 @@ button_delete_selected.grid(row=0, column=1, padx=5, pady=5, sticky=W+E)
 label_files = Label(input_frame, text=u"Loaded files: ")
 label_files.grid(row=1, column=0, columnspan=3, rowspan=1, sticky=W, padx=2, pady=(5,0))
 
-scrollbar = tk.Scrollbar(input_frame, orient="vertical")
-scrollbar.grid(row=2, column=0, columnspan=3, rowspan=1, sticky=N+S, padx=2, pady=2)
+scrollbar = tk.Scrollbar(input_frame, orient=VERTICAL)
+scrollbar.grid(row=2, column=0, columnspan=3, rowspan=1, sticky=N+S)
+
 
 # The listbox
 listbox = tk.Listbox(input_frame, selectmode='multiple', yscrollcommand=scrollbar.set)
 listbox.grid(row=2, column=0, columnspan=3, rowspan=1, sticky=W+E+N+S, padx=2, pady=2)
 listbox.config(yscrollcommand = scrollbar.set)
+
 
 button_plot = tk.Button(text="Generate Plots", command=generate_plot_button)
 button_plot.grid(row=3, column=1, padx=10, pady=10, sticky=W+E)
@@ -215,25 +236,38 @@ button_plot.grid(row=3, column=1, padx=10, pady=10, sticky=W+E)
 #     r = ttk.Radiobutton(option_frame1, text=val[0], value=val[1], variable=selected_size)
 #     r.grid(row=i, column=0, padx=0, pady=0, sticky=W+E)
 
-OPTIONS = [
-"I",
-"U",
-"M",
-"n",
-]
 
-label_columns = Label(option_frame1, text="1")
-label_columns.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
+for i in range(4):
+    globals()[f"label_columns{i}"] = Label(option_frame1, text="column " + str(i + 1) + ":")
+    globals()[f"label_columns{i}"].grid(row=i, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
 
-variable = StringVar(option_frame1)
-variable.set(OPTIONS[0]) # default value
+    globals()[f"value_column{i}"] = StringVar(option_frame1)
+    globals()[f"value_column{i}"].set(physical_quantity[0])  # default value
 
-w = OptionMenu(option_frame1, variable, *OPTIONS)
-w.grid(row=0, column=1, padx=2, pady=2, sticky=W+E)
+    globals()[f"quantity_column{i}"] = OptionMenu(option_frame1, globals()[f"value_column{i}"], *physical_quantity)
+    globals()[f"quantity_column{i}"].grid(row=i, column=1, padx=2, pady=2, sticky=W + E)
+    globals()[f"quantity_column{i}"].bind("<<ComboboxSelected>>", unit_choose)
+
+    globals()[f"quantity_unit_column{i}"] = ttk.Combobox(option_frame1, value=[" "])
+    globals()[f"quantity_unit_column{i}"].current(0)
+    globals()[f"quantity_unit_column{i}"].grid(row=i, column=2, padx=2, pady=2, sticky=W + E)
+
+
+
+# my_combo = ttk.Combobox(root, value=sizes)
+# my_combo.current(0)
+# my_combo.pack(pady=20)
+# # bind the combobox
+# my_combo.bind("<<ComboboxSelected>>", pick_color)
+#
+# # Color Combo box
+# color_combo = ttk.Combobox(root, value=[" "])
+# color_combo.current(0)
+# color_combo.pack(pady=20)
+
 
 
 root.mainloop()
-
 
 
 
