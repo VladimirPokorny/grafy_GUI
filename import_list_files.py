@@ -4,7 +4,7 @@ import numpy as np
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-from units import physical_quantity, data
+from units import physical_quantity, data, number_columns
 import natsort
 
 def LoadAction():
@@ -53,7 +53,8 @@ def call_delete():
         print(files_to_open)
 
 
-def unit_choose(i,*args):
+def unit_choose(*args):
+    global i
     quantity_units = data[globals()[f"value_column_a{i}"].get()]
     globals()[f"value_column_b{i}"].set(quantity_units[0])
     menu = globals()[f"quantity_column_b{i}"]['menu']
@@ -76,7 +77,6 @@ def generate_plot():
 
     for file in files_to_open:
         table = pd.read_csv(file)
-        #print(table)
 
         rozsah1 = 3
         rozsah2 = len(pd.read_csv(file).loc[:, 'x-axis'])
@@ -92,69 +92,27 @@ def generate_plot():
         i3 = table.iloc[rozsah1:rozsah2, 3]
         i3 = i3.astype(np.float64)
 
-        plt.figure(figsize=(5, 5))
+        plt.figure(figsize=(10, 10))
         plt.title('Data ze souboru: ' + os.path.basename((file).replace('.csv', '')))
         plt.plot(t, i1)
         plt.plot(t, i2)
         plt.plot(t, i3)
-        plt.show()
 
+        if pdf.get() == 0 and preview.get() == 1:
+            plt.show()
+        else:
+            pass
 
-    #     rozsah1 = 3
-    #     rozsah2 = len(pd.read_csv(file).loc[:, 'x-axis'])
-    #
-    # graf_proudy_moment_otacky(tb_t, tb_i1, tb_i2, tb_M, tb_n, file, rozsah1, rozsah2):
-    # table = pd.read_csv(file)
-    #
-    # t = table.iloc[rozsah1:rozsah2, tb_t]
-    # t = t.astype(np.float)
-    #
-    # i1 = table.iloc[rozsah1:rozsah2, tb_i1]
-    # i1 = i1.astype(np.float)
-    #
-    # if tb_i2 != -1:
-    #     i2 = table.iloc[rozsah1:rozsah2, tb_i2]
-    #     i2 = i2.astype(np.float)
-    #     i3 = - i1 - i2
-    #
-    # M = table.iloc[rozsah1:rozsah2, tb_M]
-    # M = M.astype(np.float)
-    #
-    # n = table.iloc[rozsah1:rozsah2, tb_n]
-    # n = n.astype(np.float)
-    #
-    # plt.figure(figsize=(15, 15))
-    #
-    # plt.subplot(2, 1, 1)
-    # plt.title('Průběhy proudů, otáček a momentu \nData ze souboru: ' + os.path.basename((file).replace('.csv', '')))
-    # plt.plot(t, i1, )
-    # if tb_i2 != -1:
-    #     plt.plot(t, i2, )
-    #     plt.plot(t, i3, )
-    # plt.grid(color='grey', linestyle='-', linewidth=0.1)
-    # plt.ylabel('I [A]')
-    #
-    # color = 'tab:red'
-    # ax1 = plt.subplot(2, 1, 2)
-    # ax1.set_xlabel('t [s]')
-    # ax1.set_ylabel('M [Nm]', color=color)
-    # ax1.plot(t, M, color=color)
-    # ax1.tick_params(axis='y', labelcolor=color)
-    # plt.grid(color='grey', linestyle='-', linewidth=0.1)
-    #
-    # color = 'tab:blue'
-    # ax2 = ax1.twinx()
-    # ax2.set_ylabel('n [ot/min]', color=color)  # we already handled the x-label with ax1
-    # ax2.plot(t, n * 50, color=color)
-    # ax2.tick_params(axis='y', labelcolor=color)
-    #
-    # # plt.show()
-    #
-    # plt.rcParams['pdf.fonttype'] = 42
-    # file = os.path.basename((file).replace('.csv', ''))
-    # plt.savefig('pdf/' + file + '.pdf', bbox_inches='tight')
-    # plt.close()
-    # return 1
+        if pdf.get() == 1:
+            plt.rcParams['pdf.fonttype'] = 42
+            file = os.path.basename((file).replace('.csv', ''))
+            plt.savefig('pdf/' + file + '.pdf')
+
+            if preview.get() == 1:
+                plt.show()
+            else:
+                pass
+
 
 
 # The window
@@ -170,7 +128,7 @@ root.grid_columnconfigure(1, weight=1)
 root.grid_columnconfigure(2, weight=1)
 
 input_frame = LabelFrame(root, text="input", padx=5, pady=5)
-input_frame.grid(row=0, column=0, padx=5, pady=5)
+input_frame.grid(row=0, column=0, padx=5, pady=5, sticky=N+S+W+E)
 
 input_frame.grid_rowconfigure(1, weight=1)
 input_frame.grid_columnconfigure(0, weight=1)
@@ -200,7 +158,7 @@ button_delete.grid(row=0, column=2, padx=5, pady=5, sticky=W+E)
 button_delete_selected = tk.Button(input_frame, text="Delete Selected", command=call_delete)
 button_delete_selected.grid(row=0, column=1, padx=5, pady=5, sticky=W+E)
 
-label_files = Label(input_frame, text=u"Loaded files: ")
+label_files = Label(input_frame, text="Loaded files: ")
 label_files.grid(row=1, column=0, columnspan=3, rowspan=1, sticky=W, padx=2, pady=(5,0))
 
 scrollbar = tk.Scrollbar(input_frame, orient=VERTICAL)
@@ -213,36 +171,58 @@ listbox.grid(row=2, column=0, columnspan=3, rowspan=1, sticky=W+E+N+S, padx=2, p
 listbox.config(yscrollcommand = scrollbar.set)
 
 
-button_plot = tk.Button(text="Generate Plots", command=generate_plot_button)
-button_plot.grid(row=3, column=1, padx=10, pady=10, sticky=W+E)
-#
+button_plot = tk.Button(root, text="Generate Plots", command=generate_plot_button)
+button_plot.grid(row=4, column=1, padx=10, pady=10, sticky=W+E)
 
-# selected_size = tk.StringVar()
-# sizes = (('Small', 'S'),
-#          ('Medium', 'M'),
-#          ('Large', 'L'),
-#          ('Extra Large', 'XL'),
-#          ('Extra Extra Large', 'XXL'))
+pdf = tk.IntVar()
+checkbutton_plot_pdf = tk.Checkbutton(root, text="Generate Merged PDFs", variable=pdf, onvalue=1, offvalue=0,)
+checkbutton_plot_pdf.grid(row=4, column=0, padx=10, pady=10, sticky=W+E)
+checkbutton_plot_pdf.var = pdf
 
-# for i, val in enumerate(sizes):
-#     r = ttk.Radiobutton(option_frame1, text=val[0], value=val[1], variable=selected_size)
-#     r.grid(row=i, column=0, padx=0, pady=0, sticky=W+E)
+preview = tk.IntVar()
+sample_checkbutton = tk.Checkbutton(root, text="View Preview", variable=preview, onvalue=1, offvalue=0,)
+sample_checkbutton.grid(row=3, column=0, padx=10, pady=10, sticky=W+E)
+sample_checkbutton.var = preview
 
+###################################################################
+value_column_time = StringVar(option_frame1)
+value_column_time.set('number column')  # default value
 
-for i in range(4):
-    globals()[f"label_columns{i}"] = Label(option_frame1, text="column " + str(i + 1) + ":")
-    globals()[f"label_columns{i}"].grid(row=i, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
+label_column_time = Label(option_frame1, text="Time column:")
+label_column_time.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
 
-    globals()[f"value_column{i}"] = StringVar(option_frame1)
-    globals()[f"value_column{i}"].set(physical_quantity[0])  # default value
+quantity_column_time = OptionMenu(option_frame1, value_column_time, *number_columns)
+quantity_column_time.grid(row=0, column=1, padx=2, pady=2, sticky=W + E)
 
-    globals()[f"quantity_column{i}"] = OptionMenu(option_frame1, globals()[f"value_column{i}"], *physical_quantity)
-    globals()[f"quantity_column{i}"].grid(row=i, column=1, padx=2, pady=2, sticky=W + E)
-    #globals()[f"quantity_column{i}"].bind("<<ComboboxSelected>>", unit_choose())
+##
+value_column_current1 = StringVar(option_frame1)
+value_column_current1.set('number column')  # default value
 
-    globals()[f"quantity_unit_column{i}"] = ttk.Combobox(option_frame1, value=[" "])
-    globals()[f"quantity_unit_column{i}"].current(0)
-    globals()[f"quantity_unit_column{i}"].grid(row=i, column=2, padx=2, pady=2, sticky=W + E)
+label_column_current1 = Label(option_frame1, text="Current phase 1:")
+label_column_current1.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
+
+quantity_column_current1 = OptionMenu(option_frame1, value_column_current1, *number_columns)
+quantity_column_current1.grid(row=1, column=1, padx=2, pady=2, sticky=W + E)
+
+##
+value_column_current2 = StringVar(option_frame1)
+value_column_current2.set('number column')  # default value
+
+label_column_current2 = Label(option_frame1, text="Current phase 2:")
+label_column_current2.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
+
+quantity_column_current2 = OptionMenu(option_frame1, value_column_current2, *number_columns)
+quantity_column_current2.grid(row=2, column=1, padx=2, pady=2, sticky=W + E)
+
+##
+value_column_voltage1 = StringVar(option_frame1)
+value_column_voltage1.set('number column')  # default value
+
+label_column_voltage1 = Label(option_frame1, text="Voltage phase 1:")
+label_column_voltage1.grid(row=3, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
+
+quantity_column_voltage1 = OptionMenu(option_frame1, value_column_voltage1, *number_columns)
+quantity_column_voltage1.grid(row=3, column=1, padx=2, pady=2, sticky=W + E)
 
 
 for i in range(4):
@@ -251,45 +231,14 @@ for i in range(4):
 
     globals()[f"value_column_a{i}"] = StringVar()
     globals()[f"value_column_b{i}"] = StringVar()
-    globals()[f"value_column_a{i}"].trace('w', unit_choose(i))
+    globals()[f"value_column_a{i}"].trace('w', unit_choose)
 
     globals()[f"quantity_column_a{i}"] = OptionMenu(option_frame2, globals()[f"value_column_a{i}"], *data.keys())
     globals()[f"quantity_column_b{i}"] = OptionMenu(option_frame2, globals()[f"value_column_b{i}"], '')
-    globals()[f"value_column_a{i}"].set('t - time')
+    #globals()[f"value_column_a{i}"].set(data(0))
 
     globals()[f"quantity_column_a{i}"].grid(row=i, column=1, padx=2, pady=2, sticky=W + E)
     globals()[f"quantity_column_b{i}"].grid(row=i, column=2, padx=2, pady=2, sticky=W + E)
-
-
-
-    variable_a = StringVar()
-    variable_b = StringVar()
-
-    #variable_a.trace('w', unit_choose(i))
-
-    optionmenu_a = OptionMenu(option_frame2, variable_a, *data.keys())
-    optionmenu_b = OptionMenu(option_frame2, variable_b, '')
-
-    variable_a.set('t - time')
-    optionmenu_a.grid(row=5, column=2, padx=2, pady=2, sticky=W + E)
-    optionmenu_b.grid(row=6, column=2, padx=2, pady=2, sticky=W + E)
-
-
-
-
-
-
-    #
-    # globals()[f"value_column{i}"].trace('w', unit_choose)
-    #
-    # globals()[f"quantity_column{i}"] = OptionMenu(option_frame2, globals()[f"value_column{i}"], *data.keys())
-    # globals()[f"quantity_column{i}"].grid(row=i, column=1, padx=2, pady=2, sticky=W + E)
-    #
-    # globals()[f"quantity_unit_column{i}"] = OptionMenu(option_frame2, variable_b, '')
-    # globals()[f"quantity_unit_column{i}"].grid(row=i, column=2, padx=2, pady=2, sticky=W + E)
-
-
-
 
 
 root.mainloop()

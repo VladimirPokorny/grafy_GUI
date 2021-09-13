@@ -33,8 +33,14 @@ unit_torque = [
     "Nm"
 ]
 
-
-
+number_columns = [
+    "Not measured",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+]
 
 data = {
     't - time': [
