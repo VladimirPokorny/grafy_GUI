@@ -9,7 +9,7 @@ import natsort
 
 def LoadAction():
     filetypes = (
-        ('ALL files', '*.*'),
+        #('ALL files', '*.*'),
         ('CSV files', '*.csv'),
         ('text files', '*.txt')
     )
