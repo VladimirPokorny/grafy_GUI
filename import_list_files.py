@@ -135,11 +135,11 @@ input_frame.grid_columnconfigure(0, weight=1)
 input_frame.grid_columnconfigure(1, weight=1)
 input_frame.grid_columnconfigure(2, weight=1)
 
-option_frame1 = LabelFrame(root, text="option", padx=5, pady=5)
-option_frame1.grid(row=0, column=1, padx=5, pady=5, sticky=N+S+W+E)
-
-option_frame2 = LabelFrame(root, text="option", padx=5, pady=5)
-option_frame2.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=N+S+W+E)
+# option_frame1 = LabelFrame(root, text="option", padx=5, pady=5)
+# option_frame1.grid(row=0, column=1, padx=5, pady=5, sticky=N+S+W+E)
+#
+# option_frame2 = LabelFrame(root, text="option", padx=5, pady=5)
+# option_frame2.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=N+S+W+E)
 
 # option_frame.grid_rowconfigure(1, weight=1)
 # option_frame.grid_columnconfigure(0, weight=1)
@@ -185,60 +185,60 @@ sample_checkbutton.grid(row=3, column=0, padx=10, pady=10, sticky=W+E)
 sample_checkbutton.var = preview
 
 ###################################################################
-value_column_time = StringVar(option_frame1)
-value_column_time.set('number column')  # default value
-
-label_column_time = Label(option_frame1, text="Time column:")
-label_column_time.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
-
-quantity_column_time = OptionMenu(option_frame1, value_column_time, *number_columns)
-quantity_column_time.grid(row=0, column=1, padx=2, pady=2, sticky=W + E)
-
-##
-value_column_current1 = StringVar(option_frame1)
-value_column_current1.set('number column')  # default value
-
-label_column_current1 = Label(option_frame1, text="Current phase 1:")
-label_column_current1.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
-
-quantity_column_current1 = OptionMenu(option_frame1, value_column_current1, *number_columns)
-quantity_column_current1.grid(row=1, column=1, padx=2, pady=2, sticky=W + E)
-
-##
-value_column_current2 = StringVar(option_frame1)
-value_column_current2.set('number column')  # default value
-
-label_column_current2 = Label(option_frame1, text="Current phase 2:")
-label_column_current2.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
-
-quantity_column_current2 = OptionMenu(option_frame1, value_column_current2, *number_columns)
-quantity_column_current2.grid(row=2, column=1, padx=2, pady=2, sticky=W + E)
-
-##
-value_column_voltage1 = StringVar(option_frame1)
-value_column_voltage1.set('number column')  # default value
-
-label_column_voltage1 = Label(option_frame1, text="Voltage phase 1:")
-label_column_voltage1.grid(row=3, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
-
-quantity_column_voltage1 = OptionMenu(option_frame1, value_column_voltage1, *number_columns)
-quantity_column_voltage1.grid(row=3, column=1, padx=2, pady=2, sticky=W + E)
-
-
-for i in range(4):
-    globals()[f"label_columns{i}"] = Label(option_frame2, text="column " + str(i + 1) + ":")
-    globals()[f"label_columns{i}"].grid(row=i, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
-
-    globals()[f"value_column_a{i}"] = StringVar()
-    globals()[f"value_column_b{i}"] = StringVar()
-    globals()[f"value_column_a{i}"].trace('w', unit_choose)
-
-    globals()[f"quantity_column_a{i}"] = OptionMenu(option_frame2, globals()[f"value_column_a{i}"], *data.keys())
-    globals()[f"quantity_column_b{i}"] = OptionMenu(option_frame2, globals()[f"value_column_b{i}"], '')
-    #globals()[f"value_column_a{i}"].set(data(0))
-
-    globals()[f"quantity_column_a{i}"].grid(row=i, column=1, padx=2, pady=2, sticky=W + E)
-    globals()[f"quantity_column_b{i}"].grid(row=i, column=2, padx=2, pady=2, sticky=W + E)
+# value_column_time = StringVar(option_frame1)
+# value_column_time.set('number column')  # default value
+#
+# label_column_time = Label(option_frame1, text="Time column:")
+# label_column_time.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
+#
+# quantity_column_time = OptionMenu(option_frame1, value_column_time, *number_columns)
+# quantity_column_time.grid(row=0, column=1, padx=2, pady=2, sticky=W + E)
+#
+# ##
+# value_column_current1 = StringVar(option_frame1)
+# value_column_current1.set('number column')  # default value
+#
+# label_column_current1 = Label(option_frame1, text="Current phase 1:")
+# label_column_current1.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
+#
+# quantity_column_current1 = OptionMenu(option_frame1, value_column_current1, *number_columns)
+# quantity_column_current1.grid(row=1, column=1, padx=2, pady=2, sticky=W + E)
+#
+# ##
+# value_column_current2 = StringVar(option_frame1)
+# value_column_current2.set('number column')  # default value
+#
+# label_column_current2 = Label(option_frame1, text="Current phase 2:")
+# label_column_current2.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
+#
+# quantity_column_current2 = OptionMenu(option_frame1, value_column_current2, *number_columns)
+# quantity_column_current2.grid(row=2, column=1, padx=2, pady=2, sticky=W + E)
+#
+# ##
+# value_column_voltage1 = StringVar(option_frame1)
+# value_column_voltage1.set('number column')  # default value
+#
+# label_column_voltage1 = Label(option_frame1, text="Voltage phase 1:")
+# label_column_voltage1.grid(row=3, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
+#
+# quantity_column_voltage1 = OptionMenu(option_frame1, value_column_voltage1, *number_columns)
+# quantity_column_voltage1.grid(row=3, column=1, padx=2, pady=2, sticky=W + E)
+#
+#
+# for i in range(4):
+#     globals()[f"label_columns{i}"] = Label(option_frame2, text="column " + str(i + 1) + ":")
+#     globals()[f"label_columns{i}"].grid(row=i, column=0, columnspan=1, rowspan=1, sticky=W, padx=2, pady=2)
+#
+#     globals()[f"value_column_a{i}"] = StringVar()
+#     globals()[f"value_column_b{i}"] = StringVar()
+#     globals()[f"value_column_a{i}"].trace('w', unit_choose)
+#
+#     globals()[f"quantity_column_a{i}"] = OptionMenu(option_frame2, globals()[f"value_column_a{i}"], *data.keys())
+#     globals()[f"quantity_column_b{i}"] = OptionMenu(option_frame2, globals()[f"value_column_b{i}"], '')
+#     #globals()[f"value_column_a{i}"].set(data(0))
+#
+#     globals()[f"quantity_column_a{i}"].grid(row=i, column=1, padx=2, pady=2, sticky=W + E)
+#     globals()[f"quantity_column_b{i}"].grid(row=i, column=2, padx=2, pady=2, sticky=W + E)
 
 
 root.mainloop()
