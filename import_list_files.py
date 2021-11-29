@@ -6,6 +6,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from units import physical_quantity, data, number_columns
 import natsort
+import glob
+from PyPDF2 import PdfFileReader, PdfFileMerger
+from scipy.interpolate import make_interp_spline, BSpline
+from numpy import sqrt 
+
 
 def LoadAction():
     filetypes = (
@@ -72,6 +77,21 @@ def generate_plot_button():
         print("prázdná množina")
         tk.messagebox.showwarning(title="Warning", message="Add measured data in CSV")
 
+def pdf_merger():
+    pdfs = glob.glob("pdf/*.pdf")
+    pdfs = natsort.natsorted(pdfs,reverse=False)
+    print(pdfs)
+    print('spojuju')
+
+    merger = PdfFileMerger()
+
+    for pdf in pdfs:  # iterate over the list of files
+       merger.append(PdfFileReader(pdf),'rb')
+
+    merger.write("Vsechny_grafy.pdf")
+    merger.close()
+
+
 def generate_plot():
     global files_to_open
 
@@ -82,21 +102,41 @@ def generate_plot():
         rozsah2 = len(pd.read_csv(file).loc[:, 'x-axis'])
         t = table.iloc[rozsah1:rozsah2, 0]
         t = t.astype(np.float64)
+        t_new = np.linspace(t.min(), t.max(), 500)
 
-        i1 = table.iloc[rozsah1:rozsah2, 1]
-        i1 = i1.astype(np.float64)
+        u1 = table.iloc[rozsah1:rozsah2, 1]
+        u1 = u1.astype(np.float64)
+        spl_u1 = make_interp_spline(t, u1, k = 5)
+        u1_new = spl_u1(t_new)
 
-        i2 = table.iloc[rozsah1:rozsah2, 2]
-        i2 = i2.astype(np.float64)
+        u2 = table.iloc[rozsah1:rozsah2, 2]
+        u2 = u2.astype(np.float64)
+        spl_u2 = make_interp_spline(t, u2, k = 5)
+        u2_new = spl_u2(t_new)
 
-        i3 = table.iloc[rozsah1:rozsah2, 3]
-        i3 = i3.astype(np.float64)
+        u3 = table.iloc[rozsah1:rozsah2, 3]
+        u3 = u3.astype(np.float64)
+        spl_u3 = make_interp_spline(t, u3, k = 5)
+        u3_new = spl_u3(t_new)
 
         plt.figure(figsize=(10, 10))
-        plt.title('Data ze souboru: ' + os.path.basename((file).replace('.csv', '')))
-        plt.plot(t, i1)
-        plt.plot(t, i2)
-        plt.plot(t, i3)
+        name_of_file = str(os.path.basename(file))
+        plt.title(  'Data ze souboru: %s \n' % name_of_file
+                    + 'Ui_1 = %.3f V' % rms(u1[0:3*18940])
+                    + '          Ui_1max = %.3f V' % max(u1)
+                    + '          Ui_1min = %.3f V \n' % min(u1)
+                    + 'Ui_2 = %.3f V' % rms(u2[0:3*18940])
+                    + '          Ui_2max = %.3f V' % max(u2)
+                    + '          Ui_2min = %.3f V \n' % min(u2)
+                    + 'Ui_3 = %.3f V' % rms(u3[0:3*18940])
+                    + '          Ui_3max = %.3f V' % max(u3)
+                    + '          Ui_3min = %.3f V \n' % min(u3))
+        plt.plot(t_new, u1_new, linewidth = 2)
+        plt.plot(t_new, u2_new, linewidth = 2)
+        plt.plot(t_new, u3_new, linewidth = 2)
+
+        plt.ylabel('Ui [V]')
+        plt.xlabel('t [s]')
 
         if pdf.get() == 0 and preview.get() == 1:
             plt.show()
@@ -107,28 +147,35 @@ def generate_plot():
             plt.rcParams['pdf.fonttype'] = 42
             file = os.path.basename((file).replace('.csv', ''))
             plt.savefig('pdf/' + file + '.pdf')
+            pdf_merger()
+
 
             if preview.get() == 1:
                 plt.show()
             else:
                 pass
 
+def rms(Quantity):
+    return sqrt(sum(n * n for n in Quantity)/ len(Quantity))
 
 
 # The window
 root = tk.Tk()
 root.title("List App")
-#root.geometry("500x400")
-root.geometry("700x600")
+root.geometry("500x400")
+#root.geometry("700x600")
 root.resizable(height = None, width = None)
-root.minsize(450, 350)
+root.minsize(500, 400)
 root.grid_rowconfigure(1, weight=1)
 root.grid_columnconfigure(0, weight=1)
 root.grid_columnconfigure(1, weight=1)
 root.grid_columnconfigure(2, weight=1)
+root.grid_rowconfigure(0, weight=1)
+root.grid_rowconfigure(1, weight=0)
+root.grid_rowconfigure(2, weight=0)
 
 input_frame = LabelFrame(root, text="input", padx=5, pady=5)
-input_frame.grid(row=0, column=0, padx=5, pady=5, sticky=N+S+W+E)
+input_frame.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky=N+S+W+E)
 
 input_frame.grid_rowconfigure(1, weight=1)
 input_frame.grid_columnconfigure(0, weight=1)
@@ -172,16 +219,16 @@ listbox.config(yscrollcommand = scrollbar.set)
 
 
 button_plot = tk.Button(root, text="Generate Plots", command=generate_plot_button)
-button_plot.grid(row=4, column=1, padx=10, pady=10, sticky=W+E)
+button_plot.grid(row=2, column=1, padx=10, pady=10, sticky=W+E)
 
 pdf = tk.IntVar()
 checkbutton_plot_pdf = tk.Checkbutton(root, text="Generate Merged PDFs", variable=pdf, onvalue=1, offvalue=0,)
-checkbutton_plot_pdf.grid(row=4, column=0, padx=10, pady=10, sticky=W+E)
+checkbutton_plot_pdf.grid(row=2, column=0, padx=10, pady=10, sticky=W+E)
 checkbutton_plot_pdf.var = pdf
 
 preview = tk.IntVar()
 sample_checkbutton = tk.Checkbutton(root, text="View Preview", variable=preview, onvalue=1, offvalue=0,)
-sample_checkbutton.grid(row=3, column=0, padx=10, pady=10, sticky=W+E)
+sample_checkbutton.grid(row=1, column=0, padx=10, pady=10, sticky=W+E)
 sample_checkbutton.var = preview
 
 ###################################################################
