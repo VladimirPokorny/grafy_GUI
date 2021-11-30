@@ -72,6 +72,7 @@ def generate_plot_button():
     if 'files_to_open' in globals() and len(files_to_open) != 0:
         print(files_to_open)
         generate_plot()
+        tk.messagebox.showinfo(title="Info", message="Plot generation has been successfully completed")
 
     else:
         print("prázdná množina")
