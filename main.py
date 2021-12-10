@@ -123,13 +123,13 @@ def generate_plot():
         plt.figure(figsize=(10, 10))
         name_of_file = str(os.path.basename(file))
         plt.title(  'Data ze souboru: %s \n' % name_of_file
-                    + 'Ui_1 = %.3f V' % rms(u1[0:3*18940])
+                    + 'Ui_1_rms = %.3f V' % rms(u1[0:3*18940])
                     + '          Ui_1max = %.3f V' % max(u1)
                     + '          Ui_1min = %.3f V \n' % min(u1)
-                    + 'Ui_2 = %.3f V' % rms(u2[0:3*18940])
+                    + 'Ui_2_rms = %.3f V' % rms(u2[0:3*18940])
                     + '          Ui_2max = %.3f V' % max(u2)
                     + '          Ui_2min = %.3f V \n' % min(u2)
-                    + 'Ui_3 = %.3f V' % rms(u3[0:3*18940])
+                    + 'Ui_3_rms = %.3f V' % rms(u3[0:3*18940])
                     + '          Ui_3max = %.3f V' % max(u3)
                     + '          Ui_3min = %.3f V \n' % min(u3))
         plt.plot(t_new, u1_new, linewidth = 2)
@@ -145,11 +145,11 @@ def generate_plot():
             pass
 
         if pdf.get() == 1:
+            create_folder('pdf/')
             plt.rcParams['pdf.fonttype'] = 42
             file = os.path.basename((file).replace('.csv', ''))
             plt.savefig('pdf/' + file + '.pdf')
             pdf_merger()
-
 
             if preview.get() == 1:
                 plt.show()
@@ -158,6 +158,10 @@ def generate_plot():
 
 def rms(Quantity):
     return sqrt(sum(n * n for n in Quantity)/ len(Quantity))
+
+def create_folder(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
 
 # The window
