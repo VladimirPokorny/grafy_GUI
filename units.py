@@ -32,3 +32,36 @@ unit_speed = [
 unit_torque = [
     "Nm"
 ]
+
+number_columns = [
+    "Not measured",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+]
+
+data = {
+    't - time': [
+        's',
+        'ms',
+        'us'
+    ],
+    'I - current': [
+        'A',
+        'mA',
+        'kA'
+    ],
+    'U - voltage': [
+        'V',
+        'mV',
+        'kV'
+    ],
+    'M - torque': [
+        'Nm',
+    ],
+    'n - speed': [
+        'RPM',
+    ]
+}
