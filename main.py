@@ -79,17 +79,17 @@ def generate_plot_button():
         tk.messagebox.showwarning(title="Warning", message="Add measured data in CSV")
 
 def pdf_merger():
-    pdfs = glob.glob("pdf/*.pdf")
+    pdfs = glob.glob("pdf_output/*.pdf")
     pdfs = natsort.natsorted(pdfs,reverse=False)
     print(pdfs)
-    print('spojuju')
+    print('merging')
 
     merger = PdfFileMerger()
 
     for pdf in pdfs:  # iterate over the list of files
        merger.append(PdfFileReader(pdf),'rb')
 
-    merger.write("Vsechny_grafy.pdf")
+    merger.write("pdf_output/all_plots.pdf")
     merger.close()
 
 
@@ -145,10 +145,10 @@ def generate_plot():
             pass
 
         if pdf.get() == 1:
-            create_folder('pdf/')
+            create_folder('pdf_output/')
             plt.rcParams['pdf.fonttype'] = 42
             file = os.path.basename((file).replace('.csv', ''))
-            plt.savefig('pdf/' + file + '.pdf')
+            plt.savefig('pdf_output/' + file + '.pdf')
             pdf_merger()
 
             if preview.get() == 1:
