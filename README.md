@@ -1,6 +1,6 @@
 # grafy_GUI
 
-Easy GUI app for ploting graphs from csv files and generating single pdf plots and merging all plots into one multipages pdf file.
+Easy GUI app for plotting graphs from csv files and generating single pdf plots and merging all plots into one multipages pdf file.
 The program was made for generating outputs from scope measuring induced voltage. Therefore the calculation of RMS value is given.
 
 How the GUI looks like:
